@@ -1,0 +1,15 @@
+<div ng-controller="GameController">
+  <div ng-if="gameWon">
+    <h1>You Won</h1>
+    <button ng-click="restartGame()">Restart</button>
+  </div>
+  <div ng-if="gameOver">
+    <h1>Game Over</h1>
+    <button ng-click="restartGame()">Restart</button>
+  </div>
+  <div ng-if="!gameOver && !gameWon">
+    <div class='board'>
+      <div class="container">
+        <div class='card-cont'>
+          <div ng-repeat="card in deck" class='card card-{{$index+1}}'>
+            card {{
