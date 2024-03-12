@@ -1,0 +1,73 @@
+angular.module('explodingKittens')
+  .controller('GameController', function($scope) {
+    $scope.gameOver = false;
+    $scope.gameWon = false;
+    $scope.deck = initializeDeck();
+    $scope.diffuseCardCount = 0;
+    $scope.currentCard = null;
+    $scope.cardIsShowing = false;
+
+    $scope.handleCardShow = function() {
+      const tempDeck = $scope.deck.slice();
+      const currCard = tempDeck[tempDeck.length - 1];
+      $scope.currentCard = currCard;
+      $scope.cardIsShowing = true;
+      setTimeout(function() {
+        if (tempDeck.length == 1 && currCard.cardName != "Shuffle card" && currCard.cardName != "Exploding kitten card") {
+          $scope.gameWon = true;
+          // dispatch(updateScore())
+        }
+        if (currCard.cardName == "Cat card") {
+          //remove card from deck
+          tempDeck.pop();
+          $scope.deck = tempDeck;
+        }
+        else if (currCard.cardName == "Defuse card") {
+          $scope.diffuseCardCount++;
+          tempDeck.pop();
+          $scope.deck = tempDeck;
+        }
+        else if (currCard.cardName == "Shuffle card") {
+          restartGame(); //Restart Game 
+        }
+        else if (currCard.cardName == "Exploding kitten card") { //exploding kitten card
+          if ($scope.diffuseCardCount > 0) { //if player has any diffuse cards
+            $scope.explodeAction = true; //Game over
+          }
+          else {
+            $scope.gameOver = true;
+          }
+        }
+        $scope.currentCard = null; //set currentCard to null after 2.5 secs
+        $scope.cardIsShowing = false;
+      }, 2500);
+    }
+
+    function initializeDeck() {
+      const cards = [
+        { cardName: 'Cat card', cardTitle: 'first title' },
+        { cardName: 'Defuse card', cardTitle: 'second title' },
+        { cardName: 'Shuffle card', cardTitle: 'third title' },
+        { cardName: 'Exploding kitten card', cardTitle: 'fourth title' }
+      ];
+      const tempDeck = [];
+
+      for (let i = 0; i < 5; i++) {
+        tempDeck.push(cards[getRandomInt(0, cards.length - 1)]);
+      }
+      return tempDeck;
+    }
+
+    function getRandomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
+    function restartGame() {
+      const tempDeck = initializeDeck();
+      $scope.deck = tempDeck;
+      $scope.diffuseCardCount = 0;
+      // dispatch(fetchHighscore())
+      $scope.gameOver = false;
+      $scope.gameWon = false;
+    }
+  });
